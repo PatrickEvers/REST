@@ -1,6 +1,7 @@
-const fs = require('fs').promises;
+const fs = require('fs');
 const crypto = require('crypto');
-const fs2 = require('fs');
+const fsasync = fs.promises;
+
 //Wie viele Bilder sollen geladen werden?
 var imgNumber=25;
 
@@ -23,10 +24,11 @@ async function getPhotos(){
         content += photoName + "\n";
     }
   
-    await fs.writeFile('photoNames.txt', content, 'utf8');    
+    await fsasync.writeFile('photoNames.txt', content, 'utf8');    
 }
-getPhotos();
-
+(async () => { await
+   getPhotos();
+    })();  
 
 //Klickevent für den Button
 document.getElementById('encBtn').addEventListener('click', () => {
@@ -35,7 +37,7 @@ document.getElementById('encBtn').addEventListener('click', () => {
     var password = document.getElementById('password').value;
 
     //Lese die Datei, um die Namen der Bilder zu bekommen und splitte den String auf
-    var text = fs2.readFileSync('photoNames.txt','utf8').toString().split('\n');
+    var text = fs.readFileSync('photoNames.txt','utf8').toString().split('\n');
     
     //Verschlüssel die Namen der Bilder und schreibe sie in die Textdatei
     var content = "\nVerschlüsselte Namen:\n";
@@ -46,7 +48,7 @@ document.getElementById('encBtn').addEventListener('click', () => {
             content += enc(password, text[i])+"\n";
         }
     }
-    fs.appendFile('photoNames.txt',content,'utf8');
+    fsasync.appendFile('photoNames.txt',content,'utf8');
 })
 
 //Funktion für die Verschlüsselung
