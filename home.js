@@ -1,8 +1,8 @@
 const fs = require('fs').promises;
-
+const crypto = require('crypto');
+const fs2 = require('fs');
 //Wie viele Bilder sollen geladen werden?
 var imgNumber=25;
-
 
 //Lade Bilder
 async function getPhotos(){
@@ -16,7 +16,7 @@ async function getPhotos(){
         var img = document.createElement("img");
         img.src = data[i].url;
         img.id = "image";
-        img.height="100"
+        img.height="100";
         img.alt = "Image";
         document.getElementById('output').appendChild(img);
         photoName = data[i].url.substring(data[i].url.lastIndexOf('/')+1);
@@ -28,3 +28,32 @@ async function getPhotos(){
 getPhotos();
 
 
+//Klickevent für den Button
+document.getElementById('encBtn').addEventListener('click', () => {
+
+    //Hole Passwort aus dem Textfeld
+    var password = document.getElementById('password').value;
+
+    //Lese die Datei, um die Namen der Bilder zu bekommen und splitte den String auf
+    var text = fs2.readFileSync('photoNames.txt','utf8').toString().split('\n');
+    
+    //Verschlüssel die Namen der Bilder und schreibe sie in die Textdatei
+    var content = "\nVerschlüsselte Namen:\n";
+    for(var i = 0; i < text.length; i++)
+    {
+        if(text[i] != "")
+        {
+            content += enc(password, text[i])+"\n";
+        }
+    }
+    fs.appendFile('photoNames.txt',content,'utf8');
+})
+
+//Funktion für die Verschlüsselung
+function enc (password, text){
+    var key = crypto.createCipher('aes-128-cbc', password);
+    var str = key.update(text, 'utf8', 'hex')
+    str += key.final('hex');
+    
+    return(str);
+}
