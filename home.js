@@ -1,6 +1,8 @@
 const fs = require('fs');
 const crypto = require('crypto');
 const fsasync = fs.promises;
+const remote = require('electron').remote;
+const main = remote.require('./main.js');
 
 //Wie viele Bilder sollen geladen werden?
 var imgNumber=25;
@@ -49,6 +51,7 @@ document.getElementById('encBtn').addEventListener('click', () => {
         }
     }
     fsasync.appendFile('photoNames.txt',content,'utf8');
+    main.newBrowserWindow();
 })
 
 //Funktion für die Verschlüsselung
